@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tech-thai-reading-coach — a Thai reading coach that remembers where you are</title>
+<meta name="description" content="A warm, structured Thai reading coach for English speakers who work in tech. Starts from the English words you already know, scaffolds the Thai around them, and tracks your reading level across every session.">
+
+<!-- Open Graph / social -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="tech-thai-reading-coach">
+<meta property="og:description" content="A Thai reading coach for English-speaking tech people. Starts from the words you already know — for loop, deploy, model — and tracks your reading level across sessions.">
+<meta property="og:url" content="https://nftyoginis.github.io/tech-thai-reading-coach/">
+<meta property="og:image" content="https://nftyoginis.github.io/tech-thai-reading-coach/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="tech-thai-reading-coach">
+<meta name="twitter:description" content="A Thai reading coach for English-speaking tech people — starts from the words you already know, and remembers where your reading is.">
+
+<!-- Self-hosted fonts — network-free, no CDN. Latin display + mono only; Thai uses the system stack. -->
+<style>
+  @font-face { font-family:'Fraunces'; src:url('./fonts/fraunces.woff2') format('woff2'); font-weight:100 900; font-style:normal; font-display:swap; }
+  @font-face { font-family:'Fraunces'; src:url('./fonts/fraunces-italic.woff2') format('woff2'); font-weight:100 900; font-style:italic; font-display:swap; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./fonts/jetbrains-mono-700.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+
+  :root {
+    --bg:        #f4ecdf;   /* lamp-cream */
+    --bg-deep:   #efe4d2;   /* slightly deeper cream for bands */
+    --surface:   #fbf6ec;   /* warmer card */
+    --ink:       #2b2520;   /* deep warm brown-black */
+    --muted:     #6b5f52;   /* secondary text */
+    --faint:     #9a8d7d;   /* tertiary */
+    --accent:    #b8623c;   /* terracotta */
+    --accent-dp: #8f4626;   /* deep terracotta */
+    --glow:      #f3dcc4;   /* anchor highlight wash */
+    --hair:      #e3d8c4;   /* hairlines */
+    --display: 'Fraunces', Georgia, "Iowan Old Style", serif;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --mono: 'JetBrains Mono', ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+    --thai: "Noto Serif Thai", "Sarabun", "Leelawadee UI", "Thonburi", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 28px; }
+  .wide { max-width: 1120px; }
+
+  /* skip link (a11y) */
+  .skip { position:absolute; left:-9999px; top:0; background:var(--accent); color:#fff; padding:10px 16px; border-radius:0 0 8px 0; z-index:50; }
+  .skip:focus { left:0; }
+
+  /* sticky nav */
+  nav {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(244,236,223,0.90);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hair);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; max-width: 1120px; }
+  .brand { font-family: var(--mono); font-size: 14px; letter-spacing: .02em; color: var(--ink); text-decoration: none; }
+  .brand b { color: var(--accent-dp); }
+  .navlinks a { color: var(--muted); text-decoration: none; font-size: 14.5px; margin-left: 22px; }
+  .navlinks a:hover { color: var(--accent-dp); }
+  .navlinks .cta { color: var(--surface); background: var(--accent); padding: 7px 14px; border-radius: 6px; }
+  .navlinks .cta:hover { background: var(--accent-dp); color: var(--surface); }
+  @media (max-width: 640px) { .navlinks a:not(.cta) { display: none; } }
+
+  /* ---- HERO ---- */
+  header.hero { position: relative; }
+  .hero-media { position: relative; width: 100%; }
+  .hero-media img {
+    width: 100%; height: clamp(340px, 56vh, 620px); object-fit: cover; object-position: 50% 42%;
+  }
+  /* warm fade so the image dissolves into the cream page below + a soft top vignette for the nav */
+  .hero-media::after {
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(43,37,32,0.16) 0%, rgba(43,37,32,0) 22%),
+      linear-gradient(0deg, var(--bg) 1%, rgba(244,236,223,0.0) 32%);
+  }
+  .hero-card {
+    position: relative; z-index: 2;
+    margin: -120px auto 0; background: var(--surface);
+    border: 1px solid var(--hair); border-radius: 16px;
+    box-shadow: 0 24px 60px -38px rgba(43,37,32,0.55);
+    padding: 40px 46px 44px; max-width: 820px;
+  }
+  .kicker { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-dp); margin: 0 0 18px; }
+  h1 { font-family: var(--display); font-size: clamp(34px, 5.2vw, 52px); line-height: 1.08; margin: 0 0 22px; font-weight: 540; letter-spacing: -0.012em; }
+  .lede { font-size: 20.5px; color: var(--muted); margin: 0 0 14px; }
+  .lede code, p code, li code, .feat code { font-family: var(--mono); font-size: 0.82em; background: var(--glow); color: var(--accent-dp); padding: 1px 6px; border-radius: 4px; }
+  .sub { font-size: 17px; color: var(--faint); font-style: italic; margin: 0 0 30px; font-family: var(--display); }
+  .btns a { display: inline-block; text-decoration: none; font-size: 15.5px; padding: 12px 22px; border-radius: 8px; margin: 0 12px 12px 0; transition: background .2s ease, transform .2s ease; }
+  .btns .primary { background: var(--accent); color: var(--surface); }
+  .btns .primary:hover { background: var(--accent-dp); transform: translateY(-1px); }
+  .btns .ghost { border: 1px solid var(--accent); color: var(--accent-dp); }
+  .btns .ghost:hover { background: var(--glow); }
+  @media (max-width: 700px) { .hero-card { margin: -84px 18px 0; padding: 30px 24px 34px; } }
+
+  /* ---- sections ---- */
+  section { padding: 60px 0; border-top: 1px solid var(--hair); }
+  section:first-of-type { border-top: 0; }
+  h2 { font-family: var(--display); font-size: clamp(26px, 3.6vw, 34px); margin: 0 0 8px; font-weight: 540; letter-spacing: -0.01em; line-height: 1.14; }
+  h2 .num { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-right: 12px; vertical-align: 4px; font-weight: 400; }
+  .section-sub { color: var(--muted); margin: 0 0 26px; font-size: 17.5px; max-width: 60ch; }
+  h3 { font-size: 19px; margin: 26px 0 6px; font-weight: 600; }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent-dp); }
+
+  /* ---- §01 reading sample / anchor demo ---- */
+  .reader {
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    border-radius: 16px;
+    padding: 38px 38px 30px;
+    margin: 8px 0 4px;
+    box-shadow: 0 18px 48px -40px rgba(43,37,32,0.5);
+  }
+  .reader .line { font-family: var(--thai); font-size: 29px; line-height: 2.55; color: var(--ink); margin: 0 0 14px; }
+  .reader .th { color: var(--ink); }
+  .anchor {
+    font-family: var(--mono); font-size: 17px; font-weight: 700;
+    background: var(--glow); color: var(--accent-dp);
+    padding: 2px 9px; border-radius: 5px;
+    box-shadow: 0 1px 0 var(--accent);
+    white-space: nowrap; vertical-align: middle;
+  }
+  .loan {
+    display: inline-flex; flex-direction: column; align-items: center;
+    vertical-align: middle; margin: 0 2px;
+  }
+  .loan b { font-weight: 600; color: var(--accent-dp); border-bottom: 2px dashed var(--accent); line-height: 1.3; }
+  .loan i { font-family: var(--mono); font-style: normal; font-size: 11px; letter-spacing: .03em; color: var(--faint); margin-top: 3px; }
+  .reader .caption { font-size: 16.5px; color: var(--muted); margin: 22px 0 0; line-height: 1.66; }
+  .reader .caption b { color: var(--ink); font-style: normal; }
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 24px 0 0; }
+  .tier { background: var(--bg); border: 1px solid var(--hair); border-radius: 11px; padding: 15px 16px; }
+  .tier .t-h { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-dp); margin: 0 0 6px; }
+  .tier .t-b { font-size: 14.5px; color: var(--muted); margin: 0; line-height: 1.55; }
+  @media (max-width: 620px) { .tiers { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .reader { padding: 26px 20px 22px; } .reader .line { font-size: 22px; line-height: 2.4; } }
+  .legend { font-size: 14.5px; color: var(--faint); margin: 18px 0 0; line-height: 2.1; }
+  .legend .sw { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: -2px; margin: 0 6px 0 0; }
+
+  /* ---- full-bleed image band ---- */
+  .band { position: relative; padding: 0; border: 0; }
+  .band img { width: 100%; height: clamp(280px, 42vh, 460px); object-fit: cover; object-position: 50% 50%; }
+  .band .band-quote {
+    position: absolute; inset: 0; display: flex; align-items: flex-end;
+    background: linear-gradient(90deg, rgba(43,37,32,0.55) 0%, rgba(43,37,32,0.12) 52%, rgba(43,37,32,0) 78%);
+  }
+  .band .band-quote .wrap { width: 100%; padding-bottom: 38px; }
+  .band blockquote { margin: 0; max-width: 30ch; color: #fdf7ec; font-family: var(--display); font-size: clamp(21px, 3vw, 30px); line-height: 1.34; font-style: italic; text-shadow: 0 1px 18px rgba(0,0,0,0.35); }
+  .band cite { display: block; margin-top: 12px; font-family: var(--mono); font-style: normal; font-size: 12.5px; letter-spacing: .06em; color: rgba(253,247,236,0.82); }
+
+  /* ---- §02 real-interaction demo ---- */
+  .demo { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 26px; align-items: start; margin: 6px 0 30px; }
+  @media (max-width: 760px) { .demo { grid-template-columns: 1fr; } }
+  .panel-label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+  .panel-label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+  .chat { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 20px 20px 22px; }
+  .msg { margin: 0 0 14px; }
+  .msg .who { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--faint); margin: 0 0 5px; }
+  .bubble { border-radius: 12px; padding: 12px 15px; font-size: 15.5px; line-height: 1.6; }
+  .msg.learner .bubble { background: var(--bg); color: var(--ink); border: 1px solid var(--hair); }
+  .msg.coach .bubble { background: var(--glow); color: var(--ink); }
+  .bubble .th { font-family: var(--thai); }
+  .bubble .anchor { font-size: 14px; padding: 1px 6px; }
+  .bubble .loan b { font-size: 15px; }
+  .file { background: #fffaf0; border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; }
+  .file .bar { background: var(--bg-deep); border-bottom: 1px solid var(--hair); padding: 9px 15px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); display:flex; align-items:center; gap:8px; }
+  .file .bar b { color: var(--accent-dp); }
+  .file pre { margin: 0; padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; line-height: 1.75; color: var(--ink); white-space: pre-wrap; word-break: break-word; }
+  .file .add { background: var(--glow); border-radius: 3px; box-shadow: -3px 0 0 var(--glow), 3px 0 0 var(--glow); }
+  .file .key { color: var(--accent-dp); }
+  .demo-note { font-size: 14.5px; color: var(--faint); font-style: italic; font-family: var(--display); margin: 4px 0 0; }
+
+  /* feature list */
+  .feat { display: grid; grid-template-columns: 30px 1fr; gap: 4px 16px; margin: 0 0 24px; }
+  .feat .n { font-family: var(--mono); color: var(--accent); font-size: 16px; padding-top: 3px; }
+  .feat h3 { margin: 0 0 4px; }
+  .feat p { margin: 0; color: var(--muted); font-size: 16.5px; }
+
+  /* moat callout */
+  .moat { background: var(--surface); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 26px 30px; margin: 8px 0; box-shadow: 0 16px 44px -42px rgba(43,37,32,0.5); }
+  .moat p:last-child { margin-bottom: 0; }
+  .honest { font-style: italic; color: var(--muted); font-family: var(--display); }
+
+  /* setup steps */
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
+  ol.steps li { counter-increment: s; position: relative; padding: 0 0 20px 46px; margin: 0; color: var(--muted); }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--glow); color: var(--accent-dp); font-family: var(--mono); font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  ol.steps li b { color: var(--ink); }
+
+  /* faq */
+  .faq h3 { margin-top: 24px; font-family: var(--display); font-weight: 540; font-size: 20px; }
+  .faq p { color: var(--muted); }
+
+  /* file table */
+  table { width: 100%; border-collapse: collapse; font-size: 15.5px; margin: 6px 0; }
+  th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--faint); font-weight: 400; }
+  td code { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; background: var(--glow); color: var(--accent-dp); padding: 1px 5px; border-radius: 4px; }
+  td:last-child { color: var(--muted); }
+
+  footer { border-top: 1px solid var(--hair); padding: 44px 0 64px; color: var(--faint); font-size: 14.5px; }
+  footer a { color: var(--muted); }
+  footer .by { font-family: var(--mono); color: var(--accent-dp); }
+
+  /* ---- reveal system (progressive enhancement — only hides under html.js) ---- */
+  html.js .r { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--i,0) * 80ms); will-change: opacity, transform; }
+  html.js .r.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html.js .r { opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#anchor">Skip to content</a>
+
+<nav>
+  <div class="wrap">
+    <!-- operator may prefix a Thai brand glyph here (e.g. the Thai word for "read") — left English-only by default; coach never authors Thai cold -->
+    <a class="brand" href="#top"><b>read</b> · tech-thai-reading-coach</a>
+    <span class="navlinks">
+      <a href="#anchor">The idea</a>
+      <a href="#how">How it works</a>
+      <a href="#moat">Why it's different</a>
+      <a href="#setup">Setup</a>
+      <a class="cta" href="https://github.com/NFTYoginis/tech-thai-reading-coach">GitHub</a>
+    </span>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-media">
+    <img src="./assets/hero.jpg" width="1600" height="1200"
+         alt="A person reading on a laptop and an open book by a window, with a Thai temple roof glowing in the late afternoon light outside.">
+  </div>
+  <div class="hero-card r" data-reveal="up">
+    <p class="kicker">Thai reading · for English speakers in tech</p>
+    <h1>A Thai reading coach that remembers where your reading is.</h1>
+    <p class="lede">You speak some Thai and read it slowly. You work in or love tech. This coach starts from the
+      words you already know — <code>for loop</code>, <code>deploy</code>, <code>model</code> — and reads the Thai
+      around them with you, one level at a time.</p>
+    <p class="sub">It instructs in English. It scaffolds, it doesn't translate. And unlike a fresh chat, it
+      remembers your level from session to session.</p>
+    <p class="btns">
+      <a class="primary" href="#setup">Set it up (5 min)</a>
+      <a class="ghost" href="https://github.com/NFTYoginis/tech-thai-reading-coach">Read the folder on GitHub</a>
+    </p>
+  </div>
+</header>
+
+<section id="anchor">
+  <div class="wrap">
+    <h2 class="r" data-reveal="up"><span class="num">01</span>The idea: start from what you already know</h2>
+    <p class="section-sub r" data-reveal="up" style="--i:1">A real tech-Thai sentence isn't uniformly hard for an English speaker. Some of it is
+      already in English — those words are footholds. The coach finds them first, then reads outward.</p>
+
+    <div class="reader r" data-reveal="up" style="--i:2">
+      <!-- Real operator-verified tech-Thai sentence (3 anchors, 3 phonologized loanwords).
+           Anchors = English read on sight; .loan = Thai that sounds like a known English word; .th = the Thai stretch. -->
+      <p class="line" lang="th" dir="ltr">
+        <span class="th">เมื่อคืนผม</span>
+        <span class="anchor">deploy</span>
+        <span class="loan"><b>โค้ด</b><i>code</i></span>
+        <span class="th">ขึ้น</span>
+        <span class="anchor">server</span>
+        <span class="th">ใหม่ แล้วเจอ</span>
+        <span class="loan"><b>บัก</b><i>bug</i></span>
+        <span class="th">เพราะ</span>
+        <span class="loan"><b>โมเดล</b><i>model</i></span>
+        <span class="th">มัน</span>
+        <span class="anchor">overfit</span>
+        <span class="th">กับข้อมูลเก่า</span>
+      </p>
+
+      <div class="tiers">
+        <div class="tier">
+          <p class="t-h">① Anchors — read on sight</p>
+          <p class="t-b"><b>deploy · server · overfit.</b> These are already English. You don't decode them — you just read them. Three footholds, free.</p>
+        </div>
+        <div class="tier">
+          <p class="t-h">② Loanwords — decode by sound</p>
+          <p class="t-b">โค้ด · บัก · โมเดล only <i>look</i> Thai. Say them aloud and you hear <b>code, bug, model.</b> Three more, almost free.</p>
+        </div>
+        <div class="tier">
+          <p class="t-h">③ The Thai stretch — the lesson</p>
+          <p class="t-b">What's left is the actual reading: เมื่อคืน, ขึ้น…ใหม่, เพราะ, กับข้อมูลเก่า. Smaller than the wall looked.</p>
+        </div>
+      </div>
+
+      <p class="caption">Read outward from your footholds and the whole line opens:
+        <b>“Last night I deployed code onto a new server — then hit a bug, because the model overfit on old data.”</b>
+        The wall was smaller than it looked.</p>
+      <p class="legend">
+        <span class="sw" style="background:var(--glow);box-shadow:0 1px 0 var(--accent)"></span>English anchor — read on sight
+        &nbsp;&nbsp;
+        <span class="sw" style="background:transparent;border-bottom:2px dashed var(--accent);border-radius:0"></span>loanword — sounds like the English you know
+        &nbsp;&nbsp;
+        <span class="sw" style="background:transparent;border:1px solid var(--hair)"></span>the Thai stretch — what you read together
+      </p>
+    </div>
+    <p class="r" data-reveal="up" style="margin-top:24px">Because the anchors only work if English is the language you already own, this
+      method is built for English speakers specifically — not adapted from a tool made for someone else.</p>
+  </div>
+</section>
+
+<!-- mood band: a learner in their world (Thailand). AI-generated lifestyle image, local asset, network-free. -->
+<section class="band">
+  <img src="./assets/world.jpg" width="1500" height="1125"
+       alt="A quiet co-working space in Thailand, warm wooden tables and tropical light, one person working at a laptop by the window.">
+  <div class="band-quote">
+    <div class="wrap">
+      <blockquote>The Thai you actually want to read is already half in English. You just haven't been shown where.</blockquote>
+      <cite>— the whole idea, in one line</cite>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap wide">
+    <h2 class="r" data-reveal="up"><span class="num">02</span>How a session actually goes</h2>
+    <p class="section-sub r" data-reveal="up" style="--i:1">No app, no dashboard — it runs as a chat in your own Claude Project. The whole thing turns on one
+      file the coach reads first and updates last. Here's a real exchange, and the file behind it.</p>
+
+    <div class="demo">
+      <div class="r" data-reveal="left">
+        <p class="panel-label"><span class="dot"></span>The chat — a Claude Project conversation</p>
+        <div class="chat">
+          <div class="msg learner">
+            <p class="who">You</p>
+            <div class="bubble">Okay, hit me with one. Last night's was rough.</div>
+          </div>
+          <div class="msg coach">
+            <p class="who">Coach</p>
+            <div class="bubble">You're at L2 and last time long phrases were snagging you — let's keep an eye on that. Don't read all of this yet.
+              First, just find the words you already own:<br><br>
+              <span class="th">เมื่อคืนผม</span> <span class="anchor">deploy</span> <span class="loan"><b>โค้ด</b></span> <span class="th">ขึ้น</span> <span class="anchor">server</span> <span class="th">ใหม่ แล้วเจอ</span> <span class="loan"><b>บัก</b></span> <span class="th">เพราะ</span> <span class="loan"><b>โมเดล</b></span> <span class="th">มัน</span> <span class="anchor">overfit</span> <span class="th">กับข้อมูลเก่า</span></div>
+          </div>
+          <div class="msg learner">
+            <p class="who">You</p>
+            <div class="bubble">deploy and server I see. And… โค้ด is "code"?</div>
+          </div>
+          <div class="msg coach">
+            <p class="who">Coach</p>
+            <div class="bubble">Exactly — say it aloud, it gives itself away. That's four of the key words already, before you've "read" anything.
+              Now try the short stretch between them: <span class="th">เมื่อคืน</span>. You've met it. What's it mean?</div>
+          </div>
+        </div>
+        <p class="demo-note">The reading is the rep — it scaffolds you to the meaning instead of handing you the translation.</p>
+      </div>
+
+      <div class="r" data-reveal="right" style="--i:1">
+        <p class="panel-label"><span class="dot"></span>The memory — <code>level-state.md</code>, updated at session-close</p>
+        <div class="file">
+          <div class="bar"><b>level-state.md</b> · read first, written last</div>
+<pre><span class="key">Reading level:</span>
+  L2, edging into L3 on familiar topics
+
+<span class="key">Known anchors:</span>
+  for loop, deploy, server, API, model<span class="add">, overfit</span>
+
+<span class="key">Vocab — solid:</span>
+  เมื่อคืน, ขึ้น, ใหม่<span class="add">, ข้อมูล</span>
+
+<span class="key">Recurring weak spots:</span>
+  GRAMMAR — word boundaries in long phrases
+
+<span class="key">Session log:</span>
+  2026-05-22 — read a deploy/bug line at L2;
+  worked on word boundaries; learned 2 words
+
+<span class="key">Next focus:</span>
+  <span class="add">recycle "ข้อมูลเก่า"; push one L3 line</span></pre>
+        </div>
+        <p class="demo-note">Highlighted lines are what this session added. You paste this block back at the start of the next one — that's the whole memory.</p>
+      </div>
+    </div>
+
+    <div class="feat r" data-reveal="up"><div class="n">①</div><div><h3>It opens where you are</h3>
+      <p>Before it says anything, the coach reads your level-state — your level, your anchors, the weak spots you
+        keep hitting, and the focus it set you last time. No starting from zero.</p></div></div>
+    <div class="feat r" data-reveal="up"><div class="n">②</div><div><h3>It picks a passage at your level</h3>
+      <p>From a leveled tech-Thai ladder (L1–L5), and starts the read from the English anchors you already know.</p></div></div>
+    <div class="feat r" data-reveal="up"><div class="n">③</div><div><h3>It scaffolds you to the meaning</h3>
+      <p>Finds the anchor, segments the unspaced Thai, decodes the loanword by sound. It doesn't hand you the
+        translation — the reading is the rep. (When you genuinely just need the gist, say so and it'll give it.)</p></div></div>
+    <div class="feat r" data-reveal="up"><div class="n">④</div><div><h3>It names what's tripping you</h3>
+      <p>When the same thing keeps snagging, it tags it — script, grammar, or vocab — and drills it directly, so it
+        stops costing you.</p></div></div>
+    <div class="feat r" data-reveal="up"><div class="n">⑤</div><div><h3>It updates your level-state</h3>
+      <p>At the end it logs the words you locked in, the weak spot you cleared, your next focus — and hands the
+        block back for you to save. That block is the memory that makes the next session continuous.</p></div></div>
+  </div>
+</section>
+
+<!-- second mood beat: the small satisfying moment of decoding, in the everyday (a detail, faceless). -->
+<section class="band">
+  <img src="./assets/detail.jpg" width="1200" height="900"
+       alt="Close view of hands typing on a laptop beside an open handwritten notebook and an iced coffee on a wooden café table.">
+  <div class="band-quote">
+    <div class="wrap">
+      <blockquote>One word clicks. Then the next. That small click is the whole point.</blockquote>
+      <cite>— reading, one rep at a time</cite>
+    </div>
+  </div>
+</section>
+
+<section id="moat">
+  <div class="wrap">
+    <h2 class="r" data-reveal="up"><span class="num">03</span>Why this is different (honestly)</h2>
+    <p class="section-sub r" data-reveal="up" style="--i:1">Not a claim that it reads Thai better than a fresh chat. It's about what a fresh chat
+      structurally can't do.</p>
+    <div class="moat r" data-reveal="up" style="--i:2">
+      <p>A cold AI reads and explains Thai content perfectly well in the moment — the in-session support isn't the
+        edge, and it's copyable. <b>The one thing a fresh chat can't do is remember where your reading is.</b> Ask
+        one: it'll tell you it has no memory of your level and point you to a flashcard app.</p>
+      <p>This coach holds that memory in <code>level-state.md</code> — your level, anchors, solid vs. shaky vocab,
+        recurring weak spots, and what's next — read first every session and updated at the end. Paired with the
+        English-anchor reading method, that's the whole point: <b>tech-domain reading + an English-speaker's
+        pedagogy + level-tracking, in one place.</b></p>
+      <p class="honest">It's a personal tool first. Its value doesn't depend on out-competing any app — it depends
+        on remembering where your reading is, and helping it climb.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TODO: operator — add real proof here after dogfooding: a before/after on your own reading level,
+     a screenshot of a level-state block climbing, or a short honest note on what it did for your reading.
+     Do NOT invent testimonials, metrics, or users. Leave this block out until there's something real. -->
+
+<section id="setup">
+  <div class="wrap">
+    <h2 class="r" data-reveal="up"><span class="num">04</span>Set it up (about 5 minutes)</h2>
+    <ol class="steps r" data-reveal="up" style="--i:1">
+      <li>Create a new <b>Claude Project</b> (or any assistant that reads a folder of files).</li>
+      <li>Add <code>identity.md</code>, <code>rules.md</code>, <code>examples.md</code>, and the <code>reference/</code> files as project knowledge.</li>
+      <li><b>Seed your level-state once.</b> Open <code>reference/level-state.md</code>, fill the block with your <i>real</i> current reading level — honest, not aspirational. The coach never invents your level.</li>
+      <li><b>Add a few passages.</b> Drop real tech-Thai you've encountered into the level slots in <code>reference/reading-ladder.md</code>. A handful is enough to start.</li>
+      <li>Start a session by <b>pasting your level-state block</b>. Each session after, paste the updated block the coach gave you last time — that's the memory.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="faq" class="faq">
+  <div class="wrap">
+    <h2 class="r" data-reveal="up"><span class="num">05</span>Honest answers</h2>
+    <div class="r" data-reveal="up" style="--i:1">
+    <h3>Does it read Thai better than a normal AI chat?</h3>
+    <p>No — and it won't claim to. A cold chat reads and explains Thai fine in the moment. The difference is
+      structure: it remembers your level across sessions, which a fresh chat can't.</p>
+    <h3>Can it teach me general Thai — cooking, travel, news?</h3>
+    <p>No, and it'll warmly tell you so. The tech vocabulary is the on-ramp that makes this work for an English
+      speaker; outside it, a general Thai reader or tutor will serve you better, and the coach will point you there.</p>
+    <h3>I'm a complete beginner — is this for me?</h3>
+    <p>Not yet. This is for intermediate readers who know the script but read slowly. If you're still learning the
+      alphabet, an alphabet course comes first.</p>
+    <h3>Does it teach writing or speaking?</h3>
+    <p>Not in v1. Reading-first by design — reading is the goal, and it's visual. Writing and speaking are later phases.</p>
+    <h3>Who supplies the Thai content?</h3>
+    <p>You do — real tech-Thai you actually read, plus your honest starting level. The coach is built to never
+      fabricate Thai: where a passage slot is empty, it asks you for one rather than inventing it.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="r" data-reveal="up"><span class="num">06</span>What's in the folder</h2>
+    <table class="r" data-reveal="up" style="--i:1">
+      <tr><th>File</th><th>What it holds</th></tr>
+      <tr><td><code>identity.md</code></td><td>Who the coach is, who it serves, its forced first action.</td></tr>
+      <tr><td><code>rules.md</code></td><td>The modes, the two warm boundaries, level-progression rules.</td></tr>
+      <tr><td><code>examples.md</code></td><td>Seven worked sessions, beat by beat.</td></tr>
+      <tr><td><code>reference/level-state.md</code></td><td><b>The moat.</b> Your level, anchors, vocab, weak spots, log, next focus.</td></tr>
+      <tr><td><code>reference/reading-ladder.md</code></td><td>The L1–L5 tech-Thai curriculum (passage slots you fill).</td></tr>
+      <tr><td><code>reference/register-map.md</code></td><td>The loanword-anchor pedagogy — anchors vs. stretch.</td></tr>
+      <tr><td><code>reference/reading-frameworks.md</code></td><td>The four named scaffolding methods.</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>MIT-licensed. <a href="https://github.com/NFTYoginis/tech-thai-reading-coach">github.com/NFTYoginis/tech-thai-reading-coach</a></p>
+    <p>A structured Thai-reading coach that tracks your level and feeds you tech content you care about.</p>
+    <p class="by">By Gabe — Your AI Specialist</p>
+  </div>
+</footer>
+
+<script>
+  /* progressive enhancement only: page is fully functional with JS off (the .r reveal styles are scoped to html.js) */
+  (function () {
+    var root = document.documentElement;
+    root.className += ' js';
+    var els = document.querySelectorAll('.r');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) {
+      for (var i = 0; i < els.length; i++) els[i].classList.add('in');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
+
+</body>
+</html>

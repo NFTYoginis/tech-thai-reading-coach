@@ -1,0 +1,5 @@
+# Internal drafts, scratch, OS cruft — never published
+_*
+*.bak
+*.bak.html
+.DS_Store
