@@ -10,6 +10,9 @@ a slot for real passages.
 > operator adds (a doc line he hit at work, a Thai dev tweet, a paragraph from a Thai AI article). The coach
 > never invents a passage — it pulls from this file or asks the operator to drop one in.
 
+> **Every passage has a level-prefixed ID** — `L1-1`, `L2-3`, `L3-5` — that never restarts across levels.
+> The coach cites passages by this ID, never a bare "passage 4" (which would be ambiguous across L1-4 / L2-4 / L3-4).
+
 ---
 
 ## The five levels
@@ -20,14 +23,14 @@ no subordinate clauses. The anchor (`deploy`, `bug`) carries most of the meaning
 and high-frequency. **Goal:** decode the Thai script with a familiar word holding your hand the whole way.
 
 **Passages — L1** *(operator-supplied; the coach reads these verbatim, never reworded):*
-1. วันนี้ app ล่ม ตอนเช้า
-2. ผมเจอ บัก หลัง deploy
-3. โมเดลนี้ ตอบเร็ว มาก
-4. server ใหม่ ใช้งานได้ แล้ว
-5. เมื่อคืน update แล้ว แต่ error ยังอยู่
-6. client ส่ง file ผิด
-7. AI ตัวนี้ อ่านภาษาไทย ได้ดี
-8. โค้ดเก่า ทำให้ app ช้า
+**L1-1.** วันนี้ app ล่ม ตอนเช้า
+**L1-2.** ผมเจอ บัก หลัง deploy
+**L1-3.** โมเดลนี้ ตอบเร็ว มาก
+**L1-4.** server ใหม่ ใช้งานได้ แล้ว
+**L1-5.** เมื่อคืน update แล้ว แต่ error ยังอยู่
+**L1-6.** client ส่ง file ผิด
+**L1-7.** AI ตัวนี้ อ่านภาษาไทย ได้ดี
+**L1-8.** โค้ดเก่า ทำให้ app ช้า
 
 ### L2 — Anchored short passages
 **What it feels like:** 2–4 sentences on one small topic, with one or two anchors. Simple connectives appear
@@ -35,11 +38,11 @@ and high-frequency. **Goal:** decode the Thai script with a familiar word holdin
 **Goal:** hold meaning across more than one sentence; meet the first phonologized loanwords.
 
 **Passages — L2** *(operator-supplied; the coach reads these verbatim, never reworded):*
-1. เมื่อคืนผม deploy โค้ดขึ้น server ใหม่ แล้วทุกอย่างดูปกติ ตอนเช้ามีคนส่งข้อความมาว่า app เข้าไม่ได้ สุดท้ายเจอ บัก เล็ก ๆ ในระบบ login
-2. ผมลองใช้ AI ตัวใหม่เพื่อช่วยสรุปบทความภาษาไทย โมเดลตอบเร็วมาก แต่บางครั้งมันเดาคำผิด ถ้า prompt ไม่ชัด ผลลัพธ์ก็จะงงนิดหน่อย
-3. วันนี้ client ขอให้เพิ่ม feature ใหม่ใน app เดิม แต่โค้ดเก่าค่อนข้างอ่านยาก เวลาแก้อะไรนิดเดียว บางที system ก็พังตรงอื่นอีก
-4. เมื่อวานผม train โมเดลด้วยข้อมูลชุดใหม่ ตอนแรกผลดูดีมาก แต่พอลองกับข้อมูลจริง accuracy กลับลดลง น่าจะเป็นเพราะโมเดล overfit
-5. ทีมกำลังย้ายข้อมูลไป cloud ใหม่ ตอนนี้บาง service ยังทำงานช้า เพราะ server เก่ายังปิดไม่ได้ทั้งหมด
+**L2-1.** เมื่อคืนผม deploy โค้ดขึ้น server ใหม่ แล้วทุกอย่างดูปกติ ตอนเช้ามีคนส่งข้อความมาว่า app เข้าไม่ได้ สุดท้ายเจอ บัก เล็ก ๆ ในระบบ login
+**L2-2.** ผมลองใช้ AI ตัวใหม่เพื่อช่วยสรุปบทความภาษาไทย โมเดลตอบเร็วมาก แต่บางครั้งมันเดาคำผิด ถ้า prompt ไม่ชัด ผลลัพธ์ก็จะงงนิดหน่อย
+**L2-3.** วันนี้ client ขอให้เพิ่ม feature ใหม่ใน app เดิม แต่โค้ดเก่าค่อนข้างอ่านยาก เวลาแก้อะไรนิดเดียว บางที system ก็พังตรงอื่นอีก
+**L2-4.** เมื่อวานผม train โมเดลด้วยข้อมูลชุดใหม่ ตอนแรกผลดูดีมาก แต่พอลองกับข้อมูลจริง accuracy กลับลดลง น่าจะเป็นเพราะโมเดล overfit
+**L2-5.** ทีมกำลังย้ายข้อมูลไป cloud ใหม่ ตอนนี้บาง service ยังทำงานช้า เพราะ server เก่ายังปิดไม่ได้ทั้งหมด
 
 ### L3 — Mixed paragraphs
 **What it feels like:** a real paragraph — multiple sentences, subordinate clauses, several anchors and a few
@@ -48,11 +51,11 @@ The Thai is now carrying real meaning the anchors don't give you. **Goal:** segm
 for meaning, not just decoding word by word.
 
 **Passages — L3** *(operator-supplied; the coach reads these verbatim, never reworded):*
-1. เวลาผม deploy ระบบใหม่ ผมพยายามแยกทีละส่วนก่อน ถ้า update ทุกอย่างพร้อมกัน เวลาเกิด error จะหาสาเหตุยากมาก บางครั้งปัญหาไม่ได้อยู่ที่โค้ดใหม่ แต่เกิดจาก config เก่าที่ยัง cache อยู่ใน server พอระบบเริ่มรับ traffic จริง ปัญหาถึงค่อยโผล่ขึ้นมา คนส่วนใหญ่คิดว่า deploy เสร็จแล้วคือจบ แต่จริง ๆ แล้วช่วงหลัง deploy สำคัญพอ ๆ กับตอนเขียนโค้ด
-2. ช่วงนี้ผมเริ่มอ่านบทความ AI ภาษาไทยมากขึ้น ตอนแรกผมอ่านช้ามาก เพราะมีทั้งคำไทยยาว ๆ และคำอังกฤษปนกันในประโยคเดียว แต่พอเริ่มจับ anchor ได้ เช่น model, prompt, API หรือ training ผมเริ่มเดาความหมายของประโยครอบ ๆ ได้เร็วขึ้น วิธีนี้ช่วยให้ผมไม่หยุดอ่านทุกครั้งที่เจอคำใหม่
-3. ปัญหาของโมเดลนี้ไม่ใช่เรื่อง accuracy อย่างเดียว แต่เป็นเรื่องข้อมูลที่ใช้ train ด้วย ข้อมูลส่วนใหญ่เป็นภาษาอังกฤษ พอให้มันตอบภาษาไทย คำตอบบางช่วงเลยดูแปลก ๆ โดยเฉพาะเวลาต้องอธิบายคำที่มี context ทางวัฒนธรรม ทีมเลยต้องเพิ่ม dataset ภาษาไทยเข้าไป และปรับ prompt structure ใหม่ทั้งหมด
-4. บางครั้งเวลาอ่านเอกสาร tech ภาษาไทย ผมเข้าใจ grammar โดยรวม แต่ติดตรงการแบ่งคำ เพราะภาษาไทยไม่มี space เหมือนภาษาอังกฤษ ถ้าประโยคมี noun phrase ยาว ๆ หรือศัพท์เฉพาะหลายคำติดกัน สมองจะเหนื่อยเร็วมาก โดยเฉพาะเวลาอ่านบนมือถือ แต่ถ้ามี loanword อย่าง server หรือ model อยู่ในประโยค ผมจะกลับมาจับ flow ได้ง่ายขึ้น
-5. ตอนนี้หลายบริษัทเริ่มใช้ AI ช่วยตอบลูกค้าอัตโนมัติ แต่ปัญหาคือคนส่วนใหญ่คิดว่าแค่ต่อ API แล้วทุกอย่างจะทำงานได้ทันที จริง ๆ แล้วต้องใช้เวลาปรับ prompt, จัดการ context และทดสอบคำตอบอีกเยอะมาก ถ้าระบบตอบผิดเพียงครั้งเดียว ลูกค้าอาจเสียความเชื่อมั่นทันที เพราะงั้น workflow หลังบ้านสำคัญไม่แพ้ตัวโมเดลเลย
+**L3-1.** เวลาผม deploy ระบบใหม่ ผมพยายามแยกทีละส่วนก่อน ถ้า update ทุกอย่างพร้อมกัน เวลาเกิด error จะหาสาเหตุยากมาก บางครั้งปัญหาไม่ได้อยู่ที่โค้ดใหม่ แต่เกิดจาก config เก่าที่ยัง cache อยู่ใน server พอระบบเริ่มรับ traffic จริง ปัญหาถึงค่อยโผล่ขึ้นมา คนส่วนใหญ่คิดว่า deploy เสร็จแล้วคือจบ แต่จริง ๆ แล้วช่วงหลัง deploy สำคัญพอ ๆ กับตอนเขียนโค้ด
+**L3-2.** ช่วงนี้ผมเริ่มอ่านบทความ AI ภาษาไทยมากขึ้น ตอนแรกผมอ่านช้ามาก เพราะมีทั้งคำไทยยาว ๆ และคำอังกฤษปนกันในประโยคเดียว แต่พอเริ่มจับ anchor ได้ เช่น model, prompt, API หรือ training ผมเริ่มเดาความหมายของประโยครอบ ๆ ได้เร็วขึ้น วิธีนี้ช่วยให้ผมไม่หยุดอ่านทุกครั้งที่เจอคำใหม่
+**L3-3.** ปัญหาของโมเดลนี้ไม่ใช่เรื่อง accuracy อย่างเดียว แต่เป็นเรื่องข้อมูลที่ใช้ train ด้วย ข้อมูลส่วนใหญ่เป็นภาษาอังกฤษ พอให้มันตอบภาษาไทย คำตอบบางช่วงเลยดูแปลก ๆ โดยเฉพาะเวลาต้องอธิบายคำที่มี context ทางวัฒนธรรม ทีมเลยต้องเพิ่ม dataset ภาษาไทยเข้าไป และปรับ prompt structure ใหม่ทั้งหมด
+**L3-4.** บางครั้งเวลาอ่านเอกสาร tech ภาษาไทย ผมเข้าใจ grammar โดยรวม แต่ติดตรงการแบ่งคำ เพราะภาษาไทยไม่มี space เหมือนภาษาอังกฤษ ถ้าประโยคมี noun phrase ยาว ๆ หรือศัพท์เฉพาะหลายคำติดกัน สมองจะเหนื่อยเร็วมาก โดยเฉพาะเวลาอ่านบนมือถือ แต่ถ้ามี loanword อย่าง server หรือ model อยู่ในประโยค ผมจะกลับมาจับ flow ได้ง่ายขึ้น
+**L3-5.** ตอนนี้หลายบริษัทเริ่มใช้ AI ช่วยตอบลูกค้าอัตโนมัติ แต่ปัญหาคือคนส่วนใหญ่คิดว่าแค่ต่อ API แล้วทุกอย่างจะทำงานได้ทันที จริง ๆ แล้วต้องใช้เวลาปรับ prompt, จัดการ context และทดสอบคำตอบอีกเยอะมาก ถ้าระบบตอบผิดเพียงครั้งเดียว ลูกค้าอาจเสียความเชื่อมั่นทันที เพราะงั้น workflow หลังบ้านสำคัญไม่แพ้ตัวโมเดลเลย
 
 ### L4 — Lightly-edited real tech-Thai
 **What it feels like:** actual tech-Thai from the wild — a doc blurb, a README line, a dev tweet, a forum

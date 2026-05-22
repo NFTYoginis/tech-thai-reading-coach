@@ -16,16 +16,18 @@
 <meta name="twitter:title" content="tech-thai-reading-coach">
 <meta name="twitter:description" content="A Thai reading coach for English-speaking tech people — starts from the words you already know, and remembers where your reading is.">
 
-<!-- Self-hosted fonts — network-free, no CDN. Latin display + mono only; Thai uses the system stack. -->
 <style>
+  /* ── Self-hosted type (OFL-1.1, served from this origin; see fonts/LICENSE). Zero network. ── */
   @font-face { font-family:'Fraunces'; src:url('./fonts/fraunces.woff2') format('woff2'); font-weight:100 900; font-style:normal; font-display:swap; }
   @font-face { font-family:'Fraunces'; src:url('./fonts/fraunces-italic.woff2') format('woff2'); font-weight:100 900; font-style:italic; font-display:swap; }
   @font-face { font-family:'JetBrains Mono'; src:url('./fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
   @font-face { font-family:'JetBrains Mono'; src:url('./fonts/jetbrains-mono-700.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+  @font-face { font-family:'IBM Plex Sans Thai'; src:url('./fonts/ibm-plex-sans-thai-400.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:'IBM Plex Sans Thai'; src:url('./fonts/ibm-plex-sans-thai-600.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
 
   :root {
     --bg:        #f4ecdf;   /* lamp-cream */
-    --bg-deep:   #efe4d2;   /* slightly deeper cream for bands */
+    --bg-deep:   #efe4d2;   /* deeper cream for bands */
     --surface:   #fbf6ec;   /* warmer card */
     --ink:       #2b2520;   /* deep warm brown-black */
     --muted:     #6b5f52;   /* secondary text */
@@ -34,37 +36,29 @@
     --accent-dp: #8f4626;   /* deep terracotta */
     --glow:      #f3dcc4;   /* anchor highlight wash */
     --hair:      #e3d8c4;   /* hairlines */
-    --display: 'Fraunces', Georgia, "Iowan Old Style", serif;
-    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
-    --mono: 'JetBrains Mono', ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
-    --thai: "Noto Serif Thai", "Sarabun", "Leelawadee UI", "Thonburi", sans-serif;
+    --display: 'Fraunces', Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    --serif:   'Fraunces', Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --mono:    'JetBrains Mono', ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+    --thai:    'IBM Plex Sans Thai', "Noto Serif Thai", "Sarabun", "Leelawadee UI", "Thonburi", sans-serif;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: 18px;
-    line-height: 1.72;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--serif); font-size: 18px; line-height: 1.72;
+    font-optical-sizing: auto; -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
   img { max-width: 100%; display: block; }
   .wrap { max-width: 880px; margin: 0 auto; padding: 0 28px; }
   .wide { max-width: 1120px; }
 
-  /* skip link (a11y) */
   .skip { position:absolute; left:-9999px; top:0; background:var(--accent); color:#fff; padding:10px 16px; border-radius:0 0 8px 0; z-index:50; }
   .skip:focus { left:0; }
 
-  /* sticky nav */
   nav {
     position: sticky; top: 0; z-index: 20;
-    background: rgba(244,236,223,0.90);
-    backdrop-filter: blur(8px);
+    background: rgba(244,236,223,0.90); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--hair);
   }
   nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; max-width: 1120px; }
@@ -74,15 +68,12 @@
   .navlinks a:hover { color: var(--accent-dp); }
   .navlinks .cta { color: var(--surface); background: var(--accent); padding: 7px 14px; border-radius: 6px; }
   .navlinks .cta:hover { background: var(--accent-dp); color: var(--surface); }
-  @media (max-width: 640px) { .navlinks a:not(.cta) { display: none; } }
+  @media (max-width: 680px) { .navlinks a:not(.cta) { display: none; } }
 
-  /* ---- HERO ---- */
+  /* ── HERO ── */
   header.hero { position: relative; }
   .hero-media { position: relative; width: 100%; }
-  .hero-media img {
-    width: 100%; height: clamp(340px, 56vh, 620px); object-fit: cover; object-position: 50% 42%;
-  }
-  /* warm fade so the image dissolves into the cream page below + a soft top vignette for the nav */
+  .hero-media img { width: 100%; height: clamp(340px, 56vh, 620px); object-fit: cover; object-position: 50% 42%; }
   .hero-media::after {
     content:""; position:absolute; inset:0; pointer-events:none;
     background:
@@ -90,57 +81,51 @@
       linear-gradient(0deg, var(--bg) 1%, rgba(244,236,223,0.0) 32%);
   }
   .hero-card {
-    position: relative; z-index: 2;
-    margin: -120px auto 0; background: var(--surface);
+    position: relative; z-index: 2; margin: -120px auto 0; background: var(--surface);
     border: 1px solid var(--hair); border-radius: 16px;
-    box-shadow: 0 24px 60px -38px rgba(43,37,32,0.55);
-    padding: 40px 46px 44px; max-width: 820px;
+    box-shadow: 0 24px 60px -38px rgba(43,37,32,0.55); padding: 40px 46px 44px; max-width: 820px;
   }
   .kicker { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-dp); margin: 0 0 18px; }
-  h1 { font-family: var(--display); font-size: clamp(34px, 5.2vw, 52px); line-height: 1.08; margin: 0 0 22px; font-weight: 540; letter-spacing: -0.012em; }
+  h1 { font-family: var(--display); font-size: clamp(34px, 5.2vw, 52px); line-height: 1.07; margin: 0 0 22px; font-weight: 480; letter-spacing: -0.014em; }
   .lede { font-size: 20.5px; color: var(--muted); margin: 0 0 14px; }
-  .lede code, p code, li code, .feat code { font-family: var(--mono); font-size: 0.82em; background: var(--glow); color: var(--accent-dp); padding: 1px 6px; border-radius: 4px; }
-  .sub { font-size: 17px; color: var(--faint); font-style: italic; margin: 0 0 30px; font-family: var(--display); }
-  .btns a { display: inline-block; text-decoration: none; font-size: 15.5px; padding: 12px 22px; border-radius: 8px; margin: 0 12px 12px 0; transition: background .2s ease, transform .2s ease; }
+  .lede code, p code, li code, .feat code { font-family: var(--mono); font-size: 0.8em; background: var(--glow); color: var(--accent-dp); padding: 1px 6px; border-radius: 4px; }
+  .sub { font-size: 17px; color: var(--faint); font-style: italic; margin: 0 0 30px; }
+  .btns a { display: inline-block; text-decoration: none; font-size: 15px; padding: 12px 22px; border-radius: 8px; margin: 0 12px 12px 0; font-family: var(--mono); transition: background .2s ease, transform .2s ease; }
   .btns .primary { background: var(--accent); color: var(--surface); }
   .btns .primary:hover { background: var(--accent-dp); transform: translateY(-1px); }
   .btns .ghost { border: 1px solid var(--accent); color: var(--accent-dp); }
   .btns .ghost:hover { background: var(--glow); }
   @media (max-width: 700px) { .hero-card { margin: -84px 18px 0; padding: 30px 24px 34px; } }
 
-  /* ---- sections ---- */
   section { padding: 60px 0; border-top: 1px solid var(--hair); }
   section:first-of-type { border-top: 0; }
-  h2 { font-family: var(--display); font-size: clamp(26px, 3.6vw, 34px); margin: 0 0 8px; font-weight: 540; letter-spacing: -0.01em; line-height: 1.14; }
+  h2 { font-family: var(--display); font-size: clamp(26px, 3.6vw, 34px); margin: 0 0 8px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.14; }
   h2 .num { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-right: 12px; vertical-align: 4px; font-weight: 400; }
   .section-sub { color: var(--muted); margin: 0 0 26px; font-size: 17.5px; max-width: 60ch; }
   h3 { font-size: 19px; margin: 26px 0 6px; font-weight: 600; }
   p { margin: 0 0 16px; }
   a { color: var(--accent-dp); }
 
-  /* ---- §01 reading sample / anchor demo ---- */
-  .reader {
-    background: var(--surface);
-    border: 1px solid var(--hair);
-    border-radius: 16px;
-    padding: 38px 38px 30px;
-    margin: 8px 0 4px;
-    box-shadow: 0 18px 48px -40px rgba(43,37,32,0.5);
-  }
+  /* ── video placeholder (walkthrough MP4 drops in here once animation delivers it) ── */
+  .video-ph { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden;
+    background: linear-gradient(135deg, var(--bg-deep), var(--surface)); border: 1px solid var(--hair);
+    box-shadow: 0 22px 56px -42px rgba(43,37,32,0.55); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px; }
+  .video-ph .play { width: 78px; height: 78px; border-radius: 50%; background: var(--accent); display: flex;
+    align-items: center; justify-content: center; box-shadow: 0 12px 30px -10px rgba(143,70,38,0.6); }
+  .video-ph .play::after { content:""; width:0; height:0; border-style: solid; border-width: 15px 0 15px 26px;
+    border-color: transparent transparent transparent var(--surface); margin-left: 6px; }
+  .video-ph .v-label { font-family: var(--mono); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .video-ph .v-soon { position: absolute; top: 16px; left: 16px; font-family: var(--mono); font-size: 11px; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--accent-dp); background: var(--glow); padding: 5px 11px; border-radius: 6px; }
+
+  /* ── §01 reading sample ── */
+  .reader { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: 38px 38px 30px; margin: 8px 0 4px; box-shadow: 0 18px 48px -40px rgba(43,37,32,0.5); }
   .reader .line { font-family: var(--thai); font-size: 29px; line-height: 2.55; color: var(--ink); margin: 0 0 14px; }
   .reader .th { color: var(--ink); }
-  .anchor {
-    font-family: var(--mono); font-size: 17px; font-weight: 700;
-    background: var(--glow); color: var(--accent-dp);
-    padding: 2px 9px; border-radius: 5px;
-    box-shadow: 0 1px 0 var(--accent);
-    white-space: nowrap; vertical-align: middle;
-  }
-  .loan {
-    display: inline-flex; flex-direction: column; align-items: center;
-    vertical-align: middle; margin: 0 2px;
-  }
-  .loan b { font-weight: 600; color: var(--accent-dp); border-bottom: 2px dashed var(--accent); line-height: 1.3; }
+  .anchor { font-family: var(--mono); font-size: 17px; font-weight: 700; background: var(--glow); color: var(--accent-dp); padding: 2px 9px; border-radius: 5px; box-shadow: 0 1px 0 var(--accent); white-space: nowrap; vertical-align: middle; }
+  .loan { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 2px; }
+  .loan b { font-weight: 600; color: var(--accent-dp); border-bottom: 2px dashed var(--accent); line-height: 1.3; font-family: var(--thai); }
   .loan i { font-family: var(--mono); font-style: normal; font-size: 11px; letter-spacing: .03em; color: var(--faint); margin-top: 3px; }
   .reader .caption { font-size: 16.5px; color: var(--muted); margin: 22px 0 0; line-height: 1.66; }
   .reader .caption b { color: var(--ink); font-style: normal; }
@@ -148,27 +133,26 @@
   .tier { background: var(--bg); border: 1px solid var(--hair); border-radius: 11px; padding: 15px 16px; }
   .tier .t-h { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-dp); margin: 0 0 6px; }
   .tier .t-b { font-size: 14.5px; color: var(--muted); margin: 0; line-height: 1.55; }
+  .tier .t-b .th { font-family: var(--thai); }
   @media (max-width: 620px) { .tiers { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .reader { padding: 26px 20px 22px; } .reader .line { font-size: 22px; line-height: 2.4; } }
   .legend { font-size: 14.5px; color: var(--faint); margin: 18px 0 0; line-height: 2.1; }
   .legend .sw { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: -2px; margin: 0 6px 0 0; }
 
-  /* ---- full-bleed image band ---- */
+  /* ── full-bleed image band ── */
   .band { position: relative; padding: 0; border: 0; }
   .band img { width: 100%; height: clamp(280px, 42vh, 460px); object-fit: cover; object-position: 50% 50%; }
-  .band .band-quote {
-    position: absolute; inset: 0; display: flex; align-items: flex-end;
-    background: linear-gradient(90deg, rgba(43,37,32,0.55) 0%, rgba(43,37,32,0.12) 52%, rgba(43,37,32,0) 78%);
-  }
+  .band .band-quote { position: absolute; inset: 0; display: flex; align-items: flex-end; background: linear-gradient(90deg, rgba(43,37,32,0.58) 0%, rgba(43,37,32,0.12) 52%, rgba(43,37,32,0) 78%); }
   .band .band-quote .wrap { width: 100%; padding-bottom: 38px; }
   .band blockquote { margin: 0; max-width: 30ch; color: #fdf7ec; font-family: var(--display); font-size: clamp(21px, 3vw, 30px); line-height: 1.34; font-style: italic; text-shadow: 0 1px 18px rgba(0,0,0,0.35); }
   .band cite { display: block; margin-top: 12px; font-family: var(--mono); font-style: normal; font-size: 12.5px; letter-spacing: .06em; color: rgba(253,247,236,0.82); }
 
-  /* ---- §02 real-interaction demo ---- */
+  /* ── §02 real-interaction demo ── */
   .demo { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 26px; align-items: start; margin: 6px 0 30px; }
   @media (max-width: 760px) { .demo { grid-template-columns: 1fr; } }
   .panel-label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
   .panel-label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+  .panel-label code { font-family: var(--mono); font-size: 11px; background: var(--glow); color: var(--accent-dp); padding: 1px 6px; border-radius: 4px; }
   .chat { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 20px 20px 22px; }
   .msg { margin: 0 0 14px; }
   .msg .who { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--faint); margin: 0 0 5px; }
@@ -179,35 +163,42 @@
   .bubble .anchor { font-size: 14px; padding: 1px 6px; }
   .bubble .loan b { font-size: 15px; }
   .file { background: #fffaf0; border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; }
-  .file .bar { background: var(--bg-deep); border-bottom: 1px solid var(--hair); padding: 9px 15px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); display:flex; align-items:center; gap:8px; }
+  .file .bar { background: var(--bg-deep); border-bottom: 1px solid var(--hair); padding: 9px 15px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
   .file .bar b { color: var(--accent-dp); }
   .file pre { margin: 0; padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; line-height: 1.75; color: var(--ink); white-space: pre-wrap; word-break: break-word; }
   .file .add { background: var(--glow); border-radius: 3px; box-shadow: -3px 0 0 var(--glow), 3px 0 0 var(--glow); }
   .file .key { color: var(--accent-dp); }
-  .demo-note { font-size: 14.5px; color: var(--faint); font-style: italic; font-family: var(--display); margin: 4px 0 0; }
+  .file .th { font-family: var(--thai); }
+  .demo-note { font-size: 14.5px; color: var(--faint); font-style: italic; margin: 4px 0 0; }
 
-  /* feature list */
   .feat { display: grid; grid-template-columns: 30px 1fr; gap: 4px 16px; margin: 0 0 24px; }
   .feat .n { font-family: var(--mono); color: var(--accent); font-size: 16px; padding-top: 3px; }
   .feat h3 { margin: 0 0 4px; }
   .feat p { margin: 0; color: var(--muted); font-size: 16.5px; }
 
-  /* moat callout */
-  .moat { background: var(--surface); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 26px 30px; margin: 8px 0; box-shadow: 0 16px 44px -42px rgba(43,37,32,0.5); }
-  .moat p:last-child { margin-bottom: 0; }
-  .honest { font-style: italic; color: var(--muted); font-family: var(--display); }
+  /* ── "wherever you read" triptych ── */
+  .trip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 6px 0 0; }
+  .trip figure { margin: 0; }
+  .trip img { width: 100%; height: clamp(220px, 26vw, 320px); object-fit: cover; border-radius: 13px; border: 1px solid var(--hair); box-shadow: 0 16px 44px -40px rgba(43,37,32,0.55); }
+  .trip figcaption { font-family: var(--mono); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--faint); margin: 10px 2px 0; }
+  @media (max-width: 720px) { .trip { grid-template-columns: 1fr; gap: 14px; } .trip img { height: clamp(220px, 56vw, 300px); } }
 
-  /* setup steps */
+  /* ── moat editorial split ── */
+  .split { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 34px; align-items: center; }
+  .split .pic img { width: 100%; height: 100%; max-height: 460px; object-fit: cover; border-radius: 16px; border: 1px solid var(--hair); box-shadow: 0 22px 56px -42px rgba(43,37,32,0.6); }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; gap: 22px; } .split .pic img { max-height: 320px; } }
+  .moat { background: var(--surface); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 26px 30px; margin: 0; box-shadow: 0 16px 44px -42px rgba(43,37,32,0.5); }
+  .moat p:last-child { margin-bottom: 0; }
+  .honest { font-style: italic; color: var(--muted); }
+
   ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
   ol.steps li { counter-increment: s; position: relative; padding: 0 0 20px 46px; margin: 0; color: var(--muted); }
   ol.steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--glow); color: var(--accent-dp); font-family: var(--mono); font-size: 14px; display: flex; align-items: center; justify-content: center; }
   ol.steps li b { color: var(--ink); }
 
-  /* faq */
-  .faq h3 { margin-top: 24px; font-family: var(--display); font-weight: 540; font-size: 20px; }
+  .faq h3 { margin-top: 24px; font-family: var(--display); font-weight: 500; font-size: 20px; }
   .faq p { color: var(--muted); }
 
-  /* file table */
   table { width: 100%; border-collapse: collapse; font-size: 15.5px; margin: 6px 0; }
   th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--hair); vertical-align: top; }
   th { font-family: var(--mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--faint); font-weight: 400; }
@@ -218,12 +209,10 @@
   footer a { color: var(--muted); }
   footer .by { font-family: var(--mono); color: var(--accent-dp); }
 
-  /* ---- reveal system (progressive enhancement — only hides under html.js) ---- */
+  /* ── reveal system (progressive enhancement — only hides under html.js) ── */
   html.js .r { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--i,0) * 80ms); will-change: opacity, transform; }
   html.js .r.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) {
-    html.js .r { opacity: 1 !important; transform: none !important; transition: none !important; }
-  }
+  @media (prefers-reduced-motion: reduce) { html.js .r { opacity: 1 !important; transform: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
@@ -232,7 +221,6 @@
 
 <nav>
   <div class="wrap">
-    <!-- operator may prefix a Thai brand glyph here (e.g. the Thai word for "read") — left English-only by default; coach never authors Thai cold -->
     <a class="brand" href="#top"><b>read</b> · tech-thai-reading-coach</a>
     <span class="navlinks">
       <a href="#anchor">The idea</a>
@@ -264,6 +252,23 @@
   </div>
 </header>
 
+<section id="watch">
+  <div class="wrap wide">
+    <h2 class="r" data-reveal="up">See a session in about a minute</h2>
+    <p class="section-sub r" data-reveal="up" style="--i:1">A short walkthrough of one real reading session — start to finish.</p>
+    <div class="video-ph r" data-reveal="up" style="--i:2" role="img" aria-label="Walkthrough video — coming soon">
+      <!-- ANIMATION HANDOFF: when the walkthrough MP4 is delivered, replace this placeholder block with:
+           <video controls playsinline preload="metadata" poster="./assets/video-poster.jpg" style="width:100%;height:100%;object-fit:cover">
+             <source src="./assets/walkthrough.mp4" type="video/mp4">
+           </video>
+           Keep the .video-ph wrapper (16:9, rounded) so the layout/look is unchanged. -->
+      <span class="v-soon">Coming soon</span>
+      <div class="play" aria-hidden="true"></div>
+      <span class="v-label">60-second walkthrough</span>
+    </div>
+  </div>
+</section>
+
 <section id="anchor">
   <div class="wrap">
     <h2 class="r" data-reveal="up"><span class="num">01</span>The idea: start from what you already know</h2>
@@ -271,8 +276,7 @@
       already in English — those words are footholds. The coach finds them first, then reads outward.</p>
 
     <div class="reader r" data-reveal="up" style="--i:2">
-      <!-- Real operator-verified tech-Thai sentence (3 anchors, 3 phonologized loanwords).
-           Anchors = English read on sight; .loan = Thai that sounds like a known English word; .th = the Thai stretch. -->
+      <!-- Real operator-verified tech-Thai sentence (3 anchors, 3 phonologized loanwords). -->
       <p class="line" lang="th" dir="ltr">
         <span class="th">เมื่อคืนผม</span>
         <span class="anchor">deploy</span>
@@ -295,11 +299,11 @@
         </div>
         <div class="tier">
           <p class="t-h">② Loanwords — decode by sound</p>
-          <p class="t-b">โค้ด · บัก · โมเดล only <i>look</i> Thai. Say them aloud and you hear <b>code, bug, model.</b> Three more, almost free.</p>
+          <p class="t-b"><span class="th">โค้ด · บัก · โมเดล</span> only <i>look</i> Thai. Say them aloud and you hear <b>code, bug, model.</b> Three more, almost free.</p>
         </div>
         <div class="tier">
           <p class="t-h">③ The Thai stretch — the lesson</p>
-          <p class="t-b">What's left is the actual reading: เมื่อคืน, ขึ้น…ใหม่, เพราะ, กับข้อมูลเก่า. Smaller than the wall looked.</p>
+          <p class="t-b">What's left is the actual reading: <span class="th">เมื่อคืน, ขึ้น…ใหม่, เพราะ, กับข้อมูลเก่า</span>. Smaller than the wall looked.</p>
         </div>
       </div>
 
@@ -319,9 +323,8 @@
   </div>
 </section>
 
-<!-- mood band: a learner in their world (Thailand). AI-generated lifestyle image, local asset, network-free. -->
 <section class="band">
-  <img src="./assets/world.jpg" width="1500" height="1125"
+  <img src="./assets/world.jpg" width="1400" height="1050"
        alt="A quiet co-working space in Thailand, warm wooden tables and tropical light, one person working at a laptop by the window.">
   <div class="band-quote">
     <div class="wrap">
@@ -353,7 +356,7 @@
           </div>
           <div class="msg learner">
             <p class="who">You</p>
-            <div class="bubble">deploy and server I see. And… โค้ด is "code"?</div>
+            <div class="bubble">deploy and server I see. And… <span class="th">โค้ด</span> is "code"?</div>
           </div>
           <div class="msg coach">
             <p class="who">Coach</p>
@@ -375,7 +378,7 @@
   for loop, deploy, server, API, model<span class="add">, overfit</span>
 
 <span class="key">Vocab — solid:</span>
-  เมื่อคืน, ขึ้น, ใหม่<span class="add">, ข้อมูล</span>
+  <span class="th">เมื่อคืน, ขึ้น, ใหม่</span><span class="add">, <span class="th">ข้อมูล</span></span>
 
 <span class="key">Recurring weak spots:</span>
   GRAMMAR — word boundaries in long phrases
@@ -385,7 +388,7 @@
   worked on word boundaries; learned 2 words
 
 <span class="key">Next focus:</span>
-  <span class="add">recycle "ข้อมูลเก่า"; push one L3 line</span></pre>
+  <span class="add">recycle "<span class="th">ข้อมูลเก่า</span>"; push one L3 line</span></pre>
         </div>
         <p class="demo-note">Highlighted lines are what this session added. You paste this block back at the start of the next one — that's the whole memory.</p>
       </div>
@@ -408,7 +411,6 @@
   </div>
 </section>
 
-<!-- second mood beat: the small satisfying moment of decoding, in the everyday (a detail, faceless). -->
 <section class="band">
   <img src="./assets/detail.jpg" width="1200" height="900"
        alt="Close view of hands typing on a laptop beside an open handwritten notebook and an iced coffee on a wooden café table.">
@@ -420,21 +422,39 @@
   </div>
 </section>
 
+<section id="where">
+  <div class="wrap wide">
+    <h2 class="r" data-reveal="up">Wherever you actually read</h2>
+    <p class="section-sub r" data-reveal="up" style="--i:1">A café before work, the skytrain home, the sofa at night. The coach lives in a chat,
+      so your reading practice goes where you go.</p>
+    <div class="trip r" data-reveal="up" style="--i:2">
+      <figure><img src="./assets/set-cafe.jpg" width="1000" height="667" alt="An adult working on a laptop at a bright café table with morning light and plants in Thailand."><figcaption>Morning café · over coffee</figcaption></figure>
+      <figure><img src="./assets/set-train.jpg" width="1000" height="623" alt="A commuter reading on a phone on a Bangkok skytrain, the city skyline blurred through the window."><figcaption>The commute · a few lines on the BTS</figcaption></figure>
+      <figure><img src="./assets/set-home.jpg" width="1000" height="750" alt="A person sitting cross-legged on a sofa at home reading on a laptop by a window."><figcaption>Home · unwinding at night</figcaption></figure>
+    </div>
+  </div>
+</section>
+
 <section id="moat">
-  <div class="wrap">
+  <div class="wrap wide">
     <h2 class="r" data-reveal="up"><span class="num">03</span>Why this is different (honestly)</h2>
     <p class="section-sub r" data-reveal="up" style="--i:1">Not a claim that it reads Thai better than a fresh chat. It's about what a fresh chat
       structurally can't do.</p>
-    <div class="moat r" data-reveal="up" style="--i:2">
-      <p>A cold AI reads and explains Thai content perfectly well in the moment — the in-session support isn't the
-        edge, and it's copyable. <b>The one thing a fresh chat can't do is remember where your reading is.</b> Ask
-        one: it'll tell you it has no memory of your level and point you to a flashcard app.</p>
-      <p>This coach holds that memory in <code>level-state.md</code> — your level, anchors, solid vs. shaky vocab,
-        recurring weak spots, and what's next — read first every session and updated at the end. Paired with the
-        English-anchor reading method, that's the whole point: <b>tech-domain reading + an English-speaker's
-        pedagogy + level-tracking, in one place.</b></p>
-      <p class="honest">It's a personal tool first. Its value doesn't depend on out-competing any app — it depends
-        on remembering where your reading is, and helping it climb.</p>
+    <div class="split">
+      <div class="pic r" data-reveal="left">
+        <img src="./assets/readingroom.jpg" width="1100" height="825" alt="A warm lamp-lit desk at night with a laptop, an open book, a mug of tea and a shelf of books — a quiet reading corner.">
+      </div>
+      <div class="moat r" data-reveal="right" style="--i:1">
+        <p>A cold AI reads and explains Thai content perfectly well in the moment — the in-session support isn't the
+          edge, and it's copyable. <b>The one thing a fresh chat can't do is remember where your reading is.</b> Ask
+          one: it'll tell you it has no memory of your level and point you to a flashcard app.</p>
+        <p>This coach holds that memory in <code>level-state.md</code> — your level, anchors, solid vs. shaky vocab,
+          recurring weak spots, and what's next — read first every session and updated at the end. Paired with the
+          English-anchor reading method, that's the whole point: <b>tech-domain reading + an English-speaker's
+          pedagogy + level-tracking, in one place.</b></p>
+        <p class="honest">It's a personal tool first. Its value doesn't depend on out-competing any app — it depends
+          on remembering where your reading is, and helping it climb.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -491,6 +511,17 @@
       <tr><td><code>reference/register-map.md</code></td><td>The loanword-anchor pedagogy — anchors vs. stretch.</td></tr>
       <tr><td><code>reference/reading-frameworks.md</code></td><td>The four named scaffolding methods.</td></tr>
     </table>
+  </div>
+</section>
+
+<section class="band">
+  <img src="./assets/close.jpg" width="1400" height="1050"
+       alt="Hands holding a phone over a wooden table beside a ceramic coffee cup and a small moss plant, soft window light.">
+  <div class="band-quote">
+    <div class="wrap">
+      <blockquote>Tomorrow morning, one more line. That's how reading climbs.</blockquote>
+      <cite>— pick it up where you left off</cite>
+    </div>
   </div>
 </section>
 
