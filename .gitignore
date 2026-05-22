@@ -3,3 +3,4 @@ _*
 *.bak
 *.bak.html
 .DS_Store
+docs/ig-launch/
